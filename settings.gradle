@@ -1,1 +1,10 @@
 rootProject.name = 'notice-board'
+
+include 'common'
+include 'service'
+include 'service:article'
+include 'service:article-read'
+include 'service:comment'
+include 'service:hot-article'
+include 'service:like'
+include 'service:view'
