@@ -2,6 +2,7 @@ package notice.board.article.api;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import notice.board.article.service.response.ArticlePageResponse;
 import notice.board.article.service.response.ArticleResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.client.RestClient;
@@ -57,6 +58,19 @@ public class ArticleApiTest {
         restClient.delete()
                 .uri("/v1/articles/{articleId}", 329187655796195328L)
                 .retrieve();
+    }
+
+    @Test
+    void readAllTest() {
+        ArticlePageResponse response = restClient.get()
+                .uri("/v1/articles?boardId=1&pageSize=30&page=1")
+                .retrieve()
+                .body(ArticlePageResponse.class);
+
+        System.out.println("response.getArticleCount() = " + response.getArticleCount());
+        for (ArticleResponse article : response.getArticles()) {
+            System.out.println("article.getArticleId() = " + article.getArticleId());
+        }
     }
 
     @Getter

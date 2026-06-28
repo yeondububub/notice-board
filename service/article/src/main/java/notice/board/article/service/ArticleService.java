@@ -6,6 +6,7 @@ import notice.board.article.entity.Article;
 import notice.board.article.repository.ArticleRepository;
 import notice.board.article.service.request.ArticleCreateRequest;
 import notice.board.article.service.request.ArticleUpdateRequest;
+import notice.board.article.service.response.ArticlePageResponse;
 import notice.board.article.service.response.ArticleResponse;
 import notice.board.common.snowflake.Snowflake;
 import org.springframework.stereotype.Service;
@@ -45,5 +46,18 @@ public class ArticleService {
     @Transactional
     public void delete(Long articleId) {
         articleRepository.deleteById(articleId);
+    }
+
+    public ArticlePageResponse readAll(Long boardId, Long page, Long pageSize) {
+        return ArticlePageResponse.of(
+                articleRepository.findAll(boardId, (page - 1) * pageSize, pageSize)
+                        .stream()
+                        .map(ArticleResponse::from)
+                        .toList(),
+                articleRepository.count(
+                        boardId,
+                        PageLimitCalculator.calculatePageLimit(page, pageSize, 10L)
+                )
+        );
     }
 }
