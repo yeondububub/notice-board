@@ -37,4 +37,35 @@ public interface ArticleRepository extends JpaRepository<Article,Long> {
             nativeQuery = true
     )
     Long count(@Param("boardId") Long boardId, @Param("limit") Long limit);
+
+    @Query(
+            value = "SELECT article.article_id, article.title, article.content, article.board_id, " +
+                    "       article.writer_id, article.created_at, article.modified_at " +
+                    "FROM article " +
+                    "WHERE board_id = :boardId " +
+                    "ORDER BY article_id DESC " +
+                    "LIMIT :limit",
+            nativeQuery = true
+    )
+    List<Article> findAllInfiniteScroll(
+            @Param("boardId") Long boardId,
+            @Param("limit") Long limit
+    );
+
+    @Query(
+            value = "SELECT article.article_id, article.title, article.content, article.board_id, " +
+                    "       article.writer_id, article.created_at, article.modified_at " +
+                    "FROM article " +
+                    "WHERE board_id = :boardId AND article_id < :lastArticleId " +
+                    "ORDER BY article_id DESC " +
+                    "LIMIT :limit",
+            nativeQuery = true
+    )
+    List<Article> findAllInfiniteScroll(
+            @Param("boardId") Long boardId,
+            @Param("limit") Long limit,
+            @Param("lastArticleId") Long lastArticleId
+    );
+
+
 }
