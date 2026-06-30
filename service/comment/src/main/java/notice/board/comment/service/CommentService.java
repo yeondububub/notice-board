@@ -18,7 +18,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
 
     @Transactional
-    public CommentResponse create(CommentCreateRequest request){
+    public CommentResponse create(CommentCreateRequest request) {
         Comment parent = findParent(request);
         Comment comment = commentRepository.save(
                 Comment.create(
@@ -32,7 +32,7 @@ public class CommentService {
         return CommentResponse.from(comment);
     }
 
-    private Comment findParent(CommentCreateRequest request){
+    private Comment findParent(CommentCreateRequest request) {
         Long parentCommentId = request.getParentCommentId();
         if (parentCommentId == null) {
             return null;

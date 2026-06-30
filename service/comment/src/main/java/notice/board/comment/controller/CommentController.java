@@ -19,7 +19,7 @@ public class CommentController {
         return commentService.read(commentId);
     }
 
-    @GetMapping("/v1/comments")
+    @PostMapping("/v1/comments")
     public CommentResponse create(@RequestBody CommentCreateRequest request) {
         return commentService.create(request);
     }
