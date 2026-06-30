@@ -7,3 +7,5 @@ create table comment (
     deleted bool not null,
     created_at datetime not null
 );
+
+create index idx_article_id_parent_comment_id_comment_id on comment(article_id asc, parent_comment_id asc, comment_id asc);
