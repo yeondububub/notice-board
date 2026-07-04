@@ -6,3 +6,7 @@
 docker start notice-board-mysql
 
 # -------------------
+
+# docker run --name notice-board-redis -d -p 6379:6379 redis:7.4
+
+docker start notice-board-redis
