@@ -2,6 +2,10 @@ package notice.board.like.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import notice.board.common.event.EventType;
+import notice.board.common.event.payload.ArticleLikedEventPayload;
+import notice.board.common.event.payload.ArticleUnlikedEventPayload;
+import notice.board.common.outboxmessagerelay.OutboxEventPublisher;
 import notice.board.common.snowflake.Snowflake;
 import notice.board.like.entity.ArticleLike;
 import notice.board.like.entity.ArticleLikeCount;
@@ -15,6 +19,7 @@ import org.springframework.stereotype.Service;
 public class ArticleLikeService {
 
     private final Snowflake snowflake = new Snowflake();
+    private final OutboxEventPublisher outboxEventPublisher;
     private final ArticleLikeRepository articleLikeRepository;
     private final ArticleLikeCountRepository articleLikeCountRepository;
 
@@ -46,15 +51,39 @@ public class ArticleLikeService {
                     ArticleLikeCount.init(articleId, 1L)
             );
         }
+
+        outboxEventPublisher.publish(
+                EventType.ARTICLE_LIKED,
+                ArticleLikedEventPayload.builder()
+                        .articleLikeId(articleLike.getArticleLikeId())
+                        .articleId(articleLike.getArticleId())
+                        .userId(articleLike.getUserId())
+                        .createdAt(articleLike.getCreatedAt())
+                        .articleLikeCount(count(articleLike.getArticleId()))
+                        .build(),
+                articleLike.getArticleId()
+        );
     }
 
     @Transactional
     public void unlikePessimisticLock1(Long articleId, Long userId) {
-        int deletedCount = articleLikeRepository.deleteByArticleIdAndUserId(articleId, userId);
-        
-        if (deletedCount > 0) {
-            articleLikeCountRepository.decrease(articleId);
-        }
+        // 1. 비관적 쓰기 락을 걸고 조회 (동시 진입 시 두 번째 스레드는 대기)
+        articleLikeRepository.findLockedByArticleIdAndUserId(articleId, userId)
+                .ifPresent(articleLike -> {
+                    articleLikeRepository.delete(articleLike);
+                    articleLikeCountRepository.decrease(articleId);
+                    outboxEventPublisher.publish(
+                            EventType.ARTICLE_UNLIKED,
+                            ArticleUnlikedEventPayload.builder()
+                                    .articleLikeId(articleLike.getArticleLikeId())
+                                    .articleId(articleLike.getArticleId())
+                                    .userId(articleLike.getUserId())
+                                    .createdAt(articleLike.getCreatedAt())
+                                    .articleLikeCount(count(articleLike.getArticleId()))
+                                    .build(),
+                            articleLike.getArticleId()
+                    );
+                });
     }
 
     /**
@@ -79,7 +108,7 @@ public class ArticleLikeService {
     @Transactional
     public void unlikePessimisticLock2(Long articleId, Long userId) {
         int deletedCount = articleLikeRepository.deleteByArticleIdAndUserId(articleId, userId);
-        
+
         if (deletedCount > 0) {
             ArticleLikeCount articleLikeCount = articleLikeCountRepository.findLockedByArticleId(articleId)
                     .orElseThrow();

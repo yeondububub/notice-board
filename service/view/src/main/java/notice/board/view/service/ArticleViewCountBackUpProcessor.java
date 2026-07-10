@@ -2,6 +2,9 @@ package notice.board.view.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import notice.board.common.event.EventType;
+import notice.board.common.event.payload.ArticleViewedEventPayload;
+import notice.board.common.outboxmessagerelay.OutboxEventPublisher;
 import notice.board.view.entity.ArticleViewCount;
 import notice.board.view.repository.ArticleViewCountBackUpRepository;
 import org.springframework.stereotype.Component;
@@ -10,6 +13,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class ArticleViewCountBackUpProcessor {
 
+    private final OutboxEventPublisher outboxEventPublisher;
     private final ArticleViewCountBackUpRepository articleViewCountBackUpRepository;
 
     @Transactional
@@ -23,5 +27,14 @@ public class ArticleViewCountBackUpProcessor {
                                     .save(ArticleViewCount.init(articleId, viewCount))
                     );
         }
+
+        outboxEventPublisher.publish(
+                EventType.ARTICLE_VIEWED,
+                ArticleViewedEventPayload.builder()
+                        .articleId(articleId)
+                        .articleViewCount(viewCount)
+                        .build(),
+                articleId
+        );
     }
 }

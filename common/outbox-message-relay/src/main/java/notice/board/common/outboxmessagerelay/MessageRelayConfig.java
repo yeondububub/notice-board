@@ -19,9 +19,9 @@ import java.util.concurrent.Executors;
 
 @EnableAsync
 @Configuration
-@ComponentScan(basePackages = {"notice.board.common.outboxmessagerelay"})
+@ComponentScan("notice.board.common.outboxmessagerelay")
 @EnableScheduling
-public class MessageReplayConfig {
+public class MessageRelayConfig {
 
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
