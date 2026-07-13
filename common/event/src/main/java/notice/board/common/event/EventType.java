@@ -9,14 +9,14 @@ import notice.board.common.event.payload.*;
 @Getter
 @RequiredArgsConstructor
 public enum EventType {
-    ARTICLE_CREATED(ArticleCreatedEventPayload.class, Topic.KUKE_BOARD_ARTICLE),
-    ARTICLE_UPDATED(ArticleUpdatedEventPayload.class, Topic.KUKE_BOARD_ARTICLE),
-    ARTICLE_DELETED(ArticleDeletedEventPayload.class, Topic.KUKE_BOARD_ARTICLE),
-    COMMENT_CREATED(CommentCreatedEventPayload.class, Topic.KUKE_BOARD_COMMENT),
-    COMMENT_DELETED(CommentDeletedEventPayload.class, Topic.KUKE_BOARD_COMMENT),
-    ARTICLE_LIKED(ArticleLikedEventPayload.class, Topic.KUKE_BOARD_LIKE),
-    ARTICLE_UNLIKED(ArticleUnlikedEventPayload.class, Topic.KUKE_BOARD_LIKE),
-    ARTICLE_VIEWED(ArticleViewedEventPayload.class, Topic.KUKE_BOARD_VIEW);
+    ARTICLE_CREATED(ArticleCreatedEventPayload.class, Topic.NOTICE_BOARD_ARTICLE),
+    ARTICLE_UPDATED(ArticleUpdatedEventPayload.class, Topic.NOTICE_BOARD_ARTICLE),
+    ARTICLE_DELETED(ArticleDeletedEventPayload.class, Topic.NOTICE_BOARD_ARTICLE),
+    COMMENT_CREATED(CommentCreatedEventPayload.class, Topic.NOTICE_BOARD_COMMENT),
+    COMMENT_DELETED(CommentDeletedEventPayload.class, Topic.NOTICE_BOARD_COMMENT),
+    ARTICLE_LIKED(ArticleLikedEventPayload.class, Topic.NOTICE_BOARD_LIKE),
+    ARTICLE_UNLIKED(ArticleUnlikedEventPayload.class, Topic.NOTICE_BOARD_LIKE),
+    ARTICLE_VIEWED(ArticleViewedEventPayload.class, Topic.NOTICE_BOARD_VIEW);
 
     private final Class<? extends EventPayload> payloadClass;
     private final String topic;
@@ -32,9 +32,9 @@ public enum EventType {
     }
 
     public static class Topic {
-        public static final String KUKE_BOARD_ARTICLE = "kuke-board-article";
-        public static final String KUKE_BOARD_COMMENT = "kuke-board-comment";
-        public static final String KUKE_BOARD_LIKE = "kuke-board-like";
-        public static final String KUKE_BOARD_VIEW = "kuke-board-view";
+        public static final String NOTICE_BOARD_ARTICLE = "kuke-board-article";
+        public static final String NOTICE_BOARD_COMMENT = "kuke-board-comment";
+        public static final String NOTICE_BOARD_LIKE = "kuke-board-like";
+        public static final String NOTICE_BOARD_VIEW = "kuke-board-view";
     }
 }
