@@ -1,11 +1,11 @@
-package notice.board.hotarticle.consumer;
+package notice.board.articleread.consumer;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import notice.board.articleread.service.ArticleReadService;
 import notice.board.common.event.Event;
 import notice.board.common.event.EventPayload;
 import notice.board.common.event.EventType;
-import notice.board.hotarticle.service.HotArticleService;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Component;
@@ -13,21 +13,22 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class HotArticleEventConsumer {
-    private final HotArticleService hotArticleService;
+public class ArticleReadEventConsumer {
+
+    private final ArticleReadService articleReadService;
 
     @KafkaListener(topics = {
             EventType.Topic.NOTICE_BOARD_ARTICLE,
             EventType.Topic.NOTICE_BOARD_COMMENT,
-            EventType.Topic.NOTICE_BOARD_LIKE,
-            EventType.Topic.NOTICE_BOARD_VIEW
+            EventType.Topic.NOTICE_BOARD_LIKE
     })
     public void listen(String message, Acknowledgment ack) {
-        log.info("[HotArticleEventConsumer.listen] received message: {}", message);
+        log.info("[ArticleReadEventConsumer.listen] message={}", message);
         Event<EventPayload> event = Event.fromJson(message);
         if (event != null) {
-            hotArticleService.handleEvent(event);
+            articleReadService.handleEvent(event);
         }
         ack.acknowledge();
     }
+
 }
