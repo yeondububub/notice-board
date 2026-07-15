@@ -24,6 +24,6 @@ public class CommentDeletedEventHandler implements EventHandler<CommentDeletedEv
 
     @Override
     public boolean supports(Event<CommentDeletedEventPayload> event) {
-        return EventType.COMMENT_CREATED == event.getType();
+        return EventType.COMMENT_DELETED == event.getType();
     }
 }
